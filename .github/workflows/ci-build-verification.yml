@@ -1,0 +1,57 @@
+name: CI - Build Verification
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-client:
+    name: Build Client
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: shopsmart/client/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./shopsmart/client
+        run: npm install
+      
+      - name: Build client
+        working-directory: ./shopsmart/client
+        run: npm run build
+
+  build-server:
+    name: Build Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: shopsmart/server/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./shopsmart/server
+        run: npm install
+      
+      - name: Verify server setup
+        working-directory: ./shopsmart/server
+        run: |
+          echo "Server dependencies installed successfully"
+          node --version
+          npm --version
